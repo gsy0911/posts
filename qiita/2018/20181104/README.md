@@ -1,12 +1,12 @@
 # はじめに
 
-[このデモ](https://github.com/tensorflow/tfjs-models/tree/master/posenet)と[このゲーム](https://developers.gnavi.co.jp/entry/posenet/hasegawa)を基にユーザの姿勢を認識して部屋の電気をオンオフするシステムを作成した．
-なお，このシステムは[Kit-Ok](https://qiita.com/Kit-Ok)さんと一緒に突然の思い付きと深夜テンションで作成したので，生暖かい目で見守ってほしい．
+[このデモ](https://github.com/tensorflow/tfjs-models/tree/master/posenet)と[このゲーム](https://developers.gnavi.co.jp/entry/posenet/hasegawa)を基にユーザの姿勢を認識して部屋の電気をオンオフするシステムを作成しました。
+なお、このシステムは[Kit-Ok](https://qiita.com/Kit-Ok)さんと一緒に突然の思い付きと深夜テンションで作成したので、生暖かい目で見守ってほしいです。
 
 
 
 ## 結果
-↓YouTube動画で踊っています
+↓YouTube 動画で踊っています。
 [![this is it](https://i.ytimg.com/vi/GuR1UcTxJHk/hqdefault.jpg?sqp=-oaymwEZCPYBEIoBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLDfElf_73ws5k5oiwVnYt2tYuqCXg)](https://youtu.be/GuR1UcTxJHk)
 
 # 環境
@@ -14,7 +14,7 @@
 * OS : Windows 10 + python3
 * Web Camera : Logicool C270
 * 赤外線リモコン : Nature Remo
-* POST受付サーバ : IFTTT
+* POST 受付サーバ : IFTTT
 * 姿勢認識 : PoseNet
 
 # ソースコード
@@ -225,31 +225,31 @@ document.head.appendChild(script);
 # 実行手順
 
 ### 事前準備
-1. IFTTTの`this`に`webhook`を，`that`に`Nature Remo`の電気コントロールを指定
+1. IFTTT の`this`に`webhook`を、`that`に`Nature Remo`の電気コントロールを指定
 2. 電気のオンとオフの両方に対して`Applet`を作成する
-3. お好みのオーディオファイルを用意して，名前の変換する．（または用意しない）
+3. お好みのオーディオファイルを用意して、名前の変換する（または用意しない）。
 
 ### 電気のオンオフ実行
 
-1. 上の2つのソースコードをローカルに落とす
+1. 上の２つのソースコードをローカルに落とす
 2. ターミナルで`C:\Users\[yourname]\[落としたディレクトリ]> python -m http.server 8000`を実行してサーバーを起動する
 3. ブラウザから`http://localhost:8000/demo.html`にアクセスする
-4. 踊る（右手を挙げたThis Is Itの場合は「消灯」，左手を挙げたThis Is Itの場合は「点灯」に設定してある）
+4. 踊る（右手を挙げた `This Is It` の場合は「消灯」、左手を挙げた `This Is It` の場合は「点灯」に設定してある）
 5. 電気が点いたり消えたりする
 
 # 結果（再掲）
 
-↓YouTube動画
+↓YouTube 動画です。
 [![this is it](https://i.ytimg.com/vi/GuR1UcTxJHk/hqdefault.jpg?sqp=-oaymwEZCPYBEIoBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLDfElf_73ws5k5oiwVnYt2tYuqCXg)](https://youtu.be/GuR1UcTxJHk)
 
 # おわりに
 
-意外と時間がかかるかと思ったが，公開されているライブラリが優秀でほぼプログラミングすることなくスマートなお家を実現できた．
+意外と時間がかかるかと思ったが、公開されているライブラリが優秀でほぼプログラミングすることなくスマートなお家を実現できた。
 
-ただ，今回のプログラムには今後修正すべき点がたくさんある．
-* html側にjavascripのコードが入っている
+ただ、今回のプログラムには今後修正すべき点がたくさんあります。
+* html 側に javascrip のコードが入っている
 * 動作の再受付を`failure`の場合に行っている
-* 関数が汚い．．．
+* 関数が汚い
 
-などなど．．．挙げればきりがない．．．
-まぁ，今回は取り急ぎだったので，この状態で公開した．
+など、挙げればきりがないです。
+まぁ、今回は取り急ぎだったので、この状態で公開しました。
