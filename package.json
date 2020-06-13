@@ -1,0 +1,26 @@
+{
+  "name": "posts",
+  "version": "1.0.0",
+  "description": "The repository stores my writings and pics posted to",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsy0911/posts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gsy0911/posts/issues"
+  },
+  "homepage": "https://github.com/gsy0911/posts#readme",
+  "devDependencies": {
+    "textlint": "^11.6.3",
+    "textlint-rule-preset-ja-spacing": "^2.0.1",
+    "textlint-rule-preset-ja-technical-writing": "^4.0.0",
+    "textlint-rule-spellcheck-tech-word": "^5.0.0"
+  }
+}
