@@ -35,7 +35,7 @@ aaaaa                |
 aaaaa                | 
 ```
 
-(Qiita にコピー&ペーストした時に「 | 」がずれたのは内緒...)
+(Qiita へコピー&ペーストした時に`|`がずれたのは内緒...)
 以下余談です。
 
 ## ずれる理由と対策法
@@ -46,7 +46,7 @@ aaaaa                |
 * 英数字 : 1byte
 
 なので，`main`中の`int byteDiff`で調整しています。
-また，以下の関数で、
+また，以下の関数より、日本語は 3byte で、英語は 1byte であることが分かります。
 
 ```java:analyze
     public static void main(String[] args){
@@ -76,7 +76,6 @@ UTF-8 length()      :5
 diff                :0
 ```
 
-結果から見るに、日本語は 3byte で、英語は 1byte であることが分かります。
 
 # 参考
 
