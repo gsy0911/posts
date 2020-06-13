@@ -6,10 +6,14 @@ The repository stores my writings and pics posted to
 * GitHub Gist
 * somewhere in private
 
+## Contents
+
+* Qiita
+* GitHub Gist
+
 ## textlint
 
-この[Qiita](https://qiita.com/takasp/items/22f7f72b691fda30aea2)を参考に
-VSCode に文章の校正環境を構築する。
+この[Qiita](https://qiita.com/takasp/items/22f7f72b691fda30aea2)を参考にして、VSCode に文章の校正環境を構築します。
 
 1: install npm modules
 
