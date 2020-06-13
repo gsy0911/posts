@@ -9,7 +9,7 @@ The repository stores my writings and pics posted to
 ## textlint
 
 この[Qiita](https://qiita.com/takasp/items/22f7f72b691fda30aea2)を参考に
-VSCode上に文章作成環境を構築する。
+VSCode に文章の校正環境を構築する。
 
 1: install npm modules
 
