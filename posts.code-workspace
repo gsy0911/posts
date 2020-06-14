@@ -7,6 +7,15 @@
 	"settings": {
 		"editor.formatOnSave": true,
 		"files.autoSave": "afterDelay",
-		"files.autoSaveDelay": 1000
+		"files.autoSaveDelay": 1000,
+		"files.exclude": { // エクスプローラーから非表示にするファイル
+			"**/node_modules": true
+		},
+		"files.insertFinalNewline": true, // ファイルの保存時に末尾を改行
+		"files.trimFinalNewlines": true, // ファイルの保存時に最終行以降をトリミング
+		"files.trimTrailingWhitespace": true, // ファイルの保存時に行末の空白をトリミング
+		"[markdown]": {
+			"files.trimTrailingWhitespace": false // Markdown のファイルは行末の空白をトリミングしない
+		},
 	}
 }
