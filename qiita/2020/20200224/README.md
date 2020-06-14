@@ -8,25 +8,25 @@
 
 * ファイルの入出力
   * 入力：単一ファイルでも可
-  * 出力：出力ファイル名は付与が不可（フォルダ名のみ指定可能）。指定したフォルダの直下に複数ファイルに分かれて出力
+  * 出力：出力ファイル名は付与が不可（フォルダ名のみ指定可能）。指定したフォルダの直下に複数ファイルで出力。
 * 遅延評価
   * ファイル出力時 or 結果出力時に処理が実行
   * 通常は実行計画のみが計算
 
 ## `Partitioning` と `Bucketing`
 
-PySparkの操作において重要な`Apache Hive`の概念
+`PySpark`の操作において重要な`Apache Hive`の概念について。
 
 * Partitioning: ファイルの出力先をフォルダごとに分けること。読み込むファイルの範囲を制限できる。
 * Bucketing: ファイル内にて、ハッシュ関数によりデータを再分割すること。効率的に読み込むことができる。
 
-PartitioningとBucketingの詳細については[こちら(英語)](https://data-flair.training/blogs/hive-partitioning-vs-bucketing/)をご覧ください。
+`Partitioning`と`Bucketing`の詳細については[こちら(英語)](https://data-flair.training/blogs/hive-partitioning-vs-bucketing/)をご覧ください。
 
 ## 計算リソース使用状況の確認
-データの処理が遅い場合は、Gangliaを使って計算リソースの使用状況を見てみると良いです。
+データの処理が遅い場合は、`Ganglia`を使って計算リソースの使用状況を見てみると良いです。
 
-特に、ネットワーク通信量（＝データ転送量）が低くて処理に時間がかかることが多いです。
-この場合は、以下のような方法で対策を行うと解決する場合があります。
+特に、ネットワーク通信量（＝データ転送量）が低くて、処理に時間がかかることが多いです。
+この場合は、以下のような方法で対策をすると解決する場合があります。
 
 * 単一ファイルよりも分散ファイルを読み込む
 * 遅延評価のため、多くの処理を行った結果は出力が遅く、以下のどちらかを利用する
@@ -45,13 +45,13 @@ PartitioningとBucketingの詳細については[こちら(英語)](https://data
 
 1. `> df.show()` で表示される内容は、イメージを掴むことが目的のため、必ずしも正しくない場合があります。
 1.  上記であげた変数以外の変数を突然利用している場合もります。
-1. AWS上で実行することをイメージしているため、パスは`s3://`から始まっています。
+1. AWS 上で実行することをイメージしているため、パスは`s3://`から始まっています。
 1. 順次追記・修正をしていく予定です。
 1. **構文や書いていることに間違がある場合はコメントをよろしくおねがいいたします。**
 
 ## import
 
-`spark`利用時に主にimportするのは以下の項目です。
+`spark`利用時に主に import するのは以下の項目です。
 
 ```
 # from pyspark.sql.functions import * とする場合もありますが、
@@ -64,14 +64,14 @@ from pyspark.sql.window import Window
 
 ## 実行環境設定
 
-* AWS上のEMRを利用する場合は、インスタンス上の時刻が`UTC`のため、`JST`に設定
+* AWS 上の`EMR`を利用する場合は、インスタンス上の時刻が`UTC`のため、`JST`に設定
 
 ```
 spark.conf.set("spark.sql.session.timeZone", "Asia/Tokyo")
 ```
 
 ## initialize spark
-`EMR`の`JupyterHub`上では必要ありませんが、pythonのscriptで実行する場合は、
+`EMR`の`JupyterHub`上では必要ありませんが、`Python`の script で実行する場合は、
 `spark`のインスタンス初期化が必要です。
 
 ```
@@ -105,7 +105,7 @@ df = spark.read.parquet("s3://some-bucket/data/dt=2020-01-*/*.parquet")
 df = spark.read.parquet(*paths)
 ```
 
-* partitionを利用していて、パーティションを読み込んだデータフレームのカラムに入れたい場合
+* `partition`を利用していて、パーティションを読み込んだデータフレームのカラムに入れたい場合
 
 ```
 # partitionを列に加えて読み込む
@@ -145,7 +145,7 @@ df.write.csv(path)
 df.write.parquet(path)
 ```
 
-* header: csvの場合のみ注意が必要
+* header: csv の場合のみ注意が必要
 
 ```
 # csvの場合はheaderの出力設定をしないと付与されない
@@ -166,16 +166,16 @@ df.write.csv(path, compression="gzip")
 df.write.option("compression", "snappy").parquet(path)
 ```
 
-* partitionBy: 出力する際にデータフレームのカラム名でpartitionをしたい場合
+* partitionBy: 出力する際にデータフレームのカラム名で`partition`をしたい場合
 
 以下の例の場合`/dt={dt_col}/count={count_col}/{file}.parquet`というフォルダに出力されます。
 ```
 df.repartition("dt", "count").write.partitionBy("dt", "count").parqeut(path)
 ```
 
-* coalesce: 通常は複数ファイルで出力される内容を1つのファイルにまとめて出力可能
+* coalesce: 通常は複数ファイルで出力される内容を１つのファイルにまとめて出力可能
 
-複数処理後にcoalesceを行うと処理速度が落ちるため、可能ならば一旦通常にファイルを出力し、再度読み込んだものをcoalesceした方がよいです。
+複数処理後に`coalesce`を行うと処理速度が落ちるため、可能ならば一旦通常にファイルを出力し、再度読み込んだものを`coalesce`した方がよいです。
 
 ```
 # 複数処理後は遅くなることがある
@@ -270,7 +270,7 @@ df_data = spark.createDataFrame(rdd, ["id","type", "cost", "date", "ship"])
 
 ## 列の追加（`withColumn()`）
 
-PySparkでは「新しい列を追加する処理」を利用して分析を行うことが多いです。
+`PySpark`では「新しい列を追加する処理」を利用して分析することが多いです。
 
 
 ```
@@ -312,7 +312,7 @@ df = df.withColumn("search_result", F.when( (F.col("id") % 2 == 0) & (F.col("roo
 
 ```
 
-* isNotNull(): nullかどうか判定
+* isNotNull(): null かどうかを判定
 
 ```
 df = df.withColumn("is_touched", F.col("value").isNotNull())
@@ -354,7 +354,7 @@ df = df.withColumn("week", F.date_trunc("week", "datetime"))
 
 ## データフレームの結合
 
-2つのDataFrameを横／縦に結合するメソッドは`join()/union()`です。
+２つの`DataFrame`を横／縦に結合するメソッドは`join()/union()`です。
 
 ```
 # onで結合する列を指定する
@@ -377,7 +377,7 @@ df = left_df.join(right_df, on=["id", "dt"])
 * F.broadcast() join: データを各クラスタに効率的に分配し、結合する方法
   * 各データフレームのデータサイズが以下のように不均衡の場合に使うと効率が上昇（することがある）
     * left_df: データ量：多、例：実データ
-    * right_df: データ量：少、例：マスターデータ
+    * right_df: データ量：少、例：マスタデータ
 
 ```
 df = left_df.join(F.broadcast(right_df), on="id")
@@ -393,7 +393,7 @@ df = upper_df.union(bottom_df)
 
 * withColumnRenamed(before, after): カラム名の変更
  
-よくカラム名のないcsvを読み込んだときに利用することが多いです。
+よくカラム名のない csv を読み込んだときに利用することが多いです。
 
 ```
 # カラム名がない場合、`_c0`から`_c{n}`というカラム名が与えられる
@@ -452,7 +452,7 @@ df = df.groupBy("id").agg(F.collect_set("code"), F.collect_list("name"))
 ```
 
 * collect(): 全ての要素を返す
-* take(n): 最初のn個の要素を返す
+* take(n): 最初の`n`個の要素を返す
 * first(): 一番最初の要素を返す
 
 ```
@@ -466,7 +466,7 @@ avg_attribute = df.collect()[0]
 
 ## filter
 
-`F.col()`を利用して特定のカラムに対してフィルタ処理を適用できます
+`F.col()`を利用して特定のカラムに対してフィルタ処理を適用できます。
 
 ```
 # using spark.function
@@ -477,9 +477,9 @@ df = df.filter(df['id'] == "A001")
 df = df.filter(df.id == "A001")
 ```
 
-* isin(): listの中の要素にある値かどうかを判定
+* isin(): list の中の要素にある値かどうかを判定
 
-ただ、可能ならばdate_listからsparkのデータフレームを作成し、joinしたほうがよいです。
+ただ、可能ならば date_list から`Spark`データフレームを作成し、join したほうがよいです。
 
 ```
 df = df.filter(F.col("dt").isin(date_list))
@@ -550,7 +550,7 @@ df = df.groupBy("id", "dt", "location_id").agg(
 ```
 
 
-* countDistinct(): 集計時に重複を削除し、countを行う
+* countDistinct(): 集計時に重複を削除し、count を行う
 
 ```
 # 例：日付ごとのユーザユニーク数
@@ -579,7 +579,7 @@ df = df.groupBy("id").agg(countDistinct("dt").alias("dt_count"))
 +---+---------+
 ```
 
-* 要素の指定にlistも指定可能
+* 要素の指定に list も指定可能
 
 ```
 group_columns = ["id", "dt"]
@@ -606,7 +606,7 @@ df = df.withColumn("prev_timestamp", F.lag(df["timestamp"]).over(w))
 ## loop処理
 
 分散環境と相性が悪いため、強く非推奨です。
-どうしてもforじゃないといけない場合にのみ利用するようにした方がいいです。
+どうしても for じゃないといけない場合にのみ利用するようにした方がいいです。
 
 ```
 for row in df.rdd.collect():

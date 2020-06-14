@@ -1,38 +1,39 @@
 # はじめに
-本記事は、AzureFunctionsのうちQueue Storageのバインドを利用してAzureFunctionsを連鎖させることを目指します。
+本記事は、`AzureFunctions`のうち`Queue Storage`のバインドを利用して`AzureFunctions`を連鎖させることを目指します。
 
-概要としては以下の通りで、
+概要としては以下の通りです。
 
-* HTTPリクエストで起動したAzureFunctionsがQueueStorageにメッセージをenqueue
-* Queueへのenqueueをトリガーに別のAzureFunctionsを起動する
+* HTTP リクエストで起動した`AzureFunctions`が`QueueStorage`にメッセージを`enqueue`
+* `Queue`への`enqueue`をトリガーに別の`AzureFunctions`を起動する
 
-図で表すとこんな感じです。
+
+図示するとこんな感じです。
 
 ![azure-Page-2 (1).png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/652bcf3b-90f4-d274-bd5d-27e04ea1e5ef.png)
 
-1. Userなどがcurlを叩く
-2. ②のAzureFunctionが起動
-3. Queue Storageにメッセージがenqueue
-4. enqueueをtriggerに③のAzureFunctionsが起動
+1. User が curl を叩く
+2. ②の`AzureFunction`が起動
+3. `Queue Storage`にメッセージが`enqueue`
+4. `enqueue`を trigger に③の`AzureFunctions`が起動
 
 # 前提
 
-* VSCodeなどを利用してAzureFunctionsの作成・デプロイができる
-* ②と③のAzureFunctionsは同一リージョン・Storage Accountに紐づいている
+* VSCode などを利用して`AzureFunctions`の作成・デプロイができる
+* ②と③の`AzureFunctions`は同一リージョン・同一`Storage Account`に紐づいている
 
 # 準備・実装
 
-## 準備：①Queue Storage
+## 準備：① `Queue Storage`
 
-Queue Storageに「＋Queue」ボタンから`piyo`というQueueを作ります。
+`Queue Storage`に「＋Queue」ボタンから`piyo`という`Queue`を作ります。
 
 ![storage_account_qiita.jpg](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/39b12259-9972-5e2e-daeb-788bb0be3cfe.jpeg)
 
-## 実装：②Azure Functions
+## 実装：② `AzureFunctions`
 
-VSCodeからHTTP TriggerのAzure Functionsを作成し、自動生成されたコードに対して修正していきます。
-追加するのは下部の5項目、`"type", "direction", "name", "queueName", "connection"`です。
-（VSCodeならば、add bindingでも追加できます。）
+VSCode から HTTP Trigger の`AzureFunctions`を作成し、自動生成されたコードに対して修正していきます。
+追加するのは下部の５項目、`"type", "direction", "name", "queueName", "connection"`です。
+（VSCode ならば、`add binding`でも追加できます）
 
 ```json:function.json
 {
@@ -64,20 +65,20 @@ VSCodeからHTTP TriggerのAzure Functionsを作成し、自動生成された�
 }
 ```
 以下に簡単に追加項目の説明をします。はまりやすい設定は、`name`です。
-この`name`がpythonプログラム上で受け取る引数名になります。
-（最初はここがわからなくて、関数の実行ログも出力が遅いのでエラーの原因の特定に時間がかかりました。。。）
+この`name`が`Python`プログラム上で受け取る引数名になります。
+（最初はここがわからなくて、関数の実行ログも出力が遅いのでエラーの原因の特定に時間がかかりました）
 
 | 項目名 | 定数 | パラメータ | 説明 |
 |:--|:--:|:--|:--|
-| type | 〇 | queue | bindingの種類 |
-| direction | 〇 | out | bindingの方向。出力のためout |
-| name |  | fuga1 | pythonの実行関数で受け取る際の**引数の名前** |
-| queueName |  | piyo | 上記のステップで作成したQueueの名前 |
-| connection | 〇 | AzureWebJobsStorage | 今回は同一のStorage Accountのため定数。通常は接続文字列などを入れる？ |
+| type | 〇 | queue | `binding`の種類 |
+| direction | 〇 | out | `binding`の方向。出力のため`out` |
+| name |  | fuga1 | `Python`の実行関数で受け取る際の**引数の名前** |
+| queueName |  | piyo | 上記のステップで作成した`Queue`の名前 |
+| connection | 〇 | AzureWebJobsStorage | 今回は同一の`Storage Account`のため定数。 |
 
 
-次に、Pythonのコード本体です。
-ここで、main関数の引数に`fuga1`を入れます。すなわち、`function.json`と同じ名前を指定します。
+次に、`Python`のコード本体です。
+ここで、main 関数の引数に`fuga1`を入れます。すなわち、`function.json`と同じ名前を指定します。
 **注意 `name`に`_`などの記号を入れると動かなくなります。**
 
 ```python:__init__.py
@@ -98,10 +99,10 @@ def main(req: func.HttpRequest, fuga1: func.Out[str]) -> func.HttpResponse:
 
 ```
 
-## 実装：③Azure Functions
+## 実装：③ `AzureFunctions`
 
-②のときと同様にVSCodeから、今度はQueue Triggerの関数を自動生成します。
-今回は入力のbindingのみです。
+②のときと同様に VSCode から、今度は`Queue Trigger`の関数を自動生成します。
+今回は入力の`binding`のみです。
 `queueName`には`Queue Storage`の`piyo`を指定します。
 `name`は`fuga2`にしています。この`name`は`AzureFunctions`ごとに固有に決めることができるからです。
 
@@ -120,8 +121,8 @@ def main(req: func.HttpRequest, fuga1: func.Out[str]) -> func.HttpResponse:
 }
 ```
 
-次に、Pythonのコード本体です。
-main関数の引数のみ`function.json`で指定した変数名`fuga2`に修正します。
+次に、`Python`のコード本体です。
+main 関数の引数のみ`function.json`で指定した変数名`fuga2`に修正します。
 
 ```python:__init__.py
 import logging
@@ -135,21 +136,21 @@ def main(fuga2: func.QueueMessage) -> None:
 
 # 実行例
 
-ローカルのcurlから叩くと、動いていることがログからわかります。
+ローカルの curl から叩くと、動いていることがログからわかります。
 
-まずは、HTTPリクエストで②のAzureFunctionsが起動し、
+まずは、HTTP リクエストで②の`AzureFunctions`が起動し、
 ![test_function.jpg](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/18384385-6343-e3f4-680a-059371da646b.jpeg)
 
-③のAzureFunctionsがQueueをトリガーにして起動しています。
+③の`AzureFunctions`が`Queue`をトリガーにして起動しています。
 ![queue_trigger.jpg](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/d8d3bc44-ea9f-303e-fe01-ae603d5ad9c4.jpeg)
 
-Queueにメッセージが入ってから2秒後にAzureFunctionsが動いているのがわかりますね。
-（関数名には目を瞑ってください。。。）
+`Queue`にメッセージが入ってから２秒後に`AzureFunctions`が動いているのがわかりますね。
+（関数名には目を瞑ってください）
 
 # おわりに
 
-AzureFunctionsのQueueTriggerで連鎖できることが分かりました。
-実際に動くサービスを作成する場合はQueueの名前を上手に生成したり、複数個のout bindingsを利用したりすることでAzureFunctionsをいい感じに連鎖できそうですね。
+`AzureFunctions`の`QueueTrigger`で連鎖できることが分かりました。
+実際に動くサービスを作成する場合は`Queue`の名前を上手に生成したり、複数個の`out bindings`を利用したりすることで`AzureFunctions`をいい感じに連鎖できそうですね。
 
 # 参考
 * [[Azure Functions] Queue StorageバインドでFunctionから別Functionを呼び出す](https://qiita.com/momotaro98/items/35fb835ce92e5d5bacb2)
