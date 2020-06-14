@@ -1,20 +1,19 @@
 
 * [AviUtl](http://spring-fragrance.mints.ne.jp/aviutl/)
 
-* mp4出力
+* mp4 出力
 
 [rigayaの日記兼メモ帳](https://rigaya34589.blog.fc2.com/blog-entry-139.html)
-1. `x264guiEx_2.57v3_7zip.7z`内の`auto_setup.exe`を実行
+1. `x264guiEx_2.57v3_7zip.7z`内の`auto_setup.exe`を実行する。
 
-* 
 
-* mp4読み込み
+* mp4 読み込み
 
 
 [参考](http://aviutl.info/l-smash-works/)
 1. `L-SMASH_Works_r804_plugins.zip`
 
-今回は古いバージョンのを入れたため`/AviUtl/`直下に`exedit.ini`を作成し，以下を追記
+今回は古いバージョンのを入れたため`/AviUtl/`直下に`exedit.ini`を作成し，以下を追記する。
 
 ```
 [extension]
@@ -42,13 +41,13 @@ dll=lua51.dll
 ```
 
 [プラグイン](https://videoinfo.tenchi.ne.jp/?DirectShow%20File%20Reader%20%A5%D7%A5%E9%A5%B0%A5%A4%A5%F3%20for%20AviUtl)
-1. `ds_input026a.lzh`内の`ds_input.aui`を`/AviUtl/Plugins/`以下に配置
+1. `ds_input026a.lzh`内の`ds_input.aui`を`/AviUtl/Plugins/`以下に配置する。
 
 
 * [LargeMemoryAwareを使う](https://indoorotaku.blogspot.com/2014/02/aviutl64bit-os.html)
 
 ## 2020/04/03
-AviUtlを利用してアップコンバートする[参考](http://maina.world.coocan.jp/garakuta/x264upenc/index.htm)。
+`AviUtl`を利用してアップコンバートする[参考](http://maina.world.coocan.jp/garakuta/x264upenc/index.htm)。
 
 * [Lanczos 3-lobed 拡大縮小](http://www.marumo.ne.jp/auf/#lanczos3)
   * lanczos3-0.5.7.lzh

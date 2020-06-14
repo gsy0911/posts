@@ -2,11 +2,11 @@
 
 ## Visual Studio Code から Azure Functions をデプロイする
 
-1. VSCodeのextentionをインストール[Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
-1. VScodeの左側に出てきた山にログイン
+1. VSCode の extention をインストール[Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+1. VScode の左側に出てきた山にログイン
   * sing in to Azure
-  * 事前に何か作成している場合は、登録しているfunction appが表示されるっぽい
-1. 一旦目標はdeployなので `Azure Function Core Tools` のインストールは見送り
+  * 事前に何か作成している場合は、登録している`function app`が表示されるっぽい
+1. 一旦目標は deploy なので `Azure Function Core Tools` のインストールは見送り
 
 ## ローカルの Functions アプリを作成する
 
@@ -27,7 +27,7 @@
   * location
   * persormance: (`Standard`, `Premium`)
   * Accound kind: (`StorageV2 (general purpose v2)`, `Storage (general purpose v1)`, `BlobStorage`)
-  * Replication: (`Locally-redundant storage (LRS)`, `Geo-redundant storage (GRS)`, `Read-access-geo-redundant storage(RA-GRS)`) LRSでも1つのregionで3回レプリケートをして、イレブンナインを達成する。[参考](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-redundancy)
+  * Replication: (`Locally-redundant storage (LRS)`, `Geo-redundant storage (GRS)`, `Read-access-geo-redundant storage(RA-GRS)`) LRS でも１つの region で３回レプリケートをして、イレブンナインを達成する。[参考](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-redundancy)
 * Networking
   * Public endpoin (all networks)
   * public endpoin (selected networks)
@@ -48,16 +48,16 @@ deployment result
 * Subscription
 * Resource group
 
-## Storage accountで利用できるストレージ形態？
+## Storage account で利用できるストレージ形態
 [Pythonを利用したアクセス方法](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-samples-python?toc=%2fazure%2fstorage%2fblobs%2ftoc.json)
 
-以下の種類のストレージ形態が選べる
+以下の種類のストレージ形態が選べる。
 * Containers
 * File shares
 * Tables
 * Queues
 
-* blob serviceって何?
+* blob service  とは
 
 ## availability Zones
 [Azure の Availability Zones の概要](https://docs.microsoft.com/ja-jp/azure/availability-zones/az-overview)
