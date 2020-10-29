@@ -161,7 +161,7 @@
 </svg>
 ```
 
-## logo-new
+## logo4
 
 ```
 <svg width="800" height="800" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
@@ -174,6 +174,23 @@
   <ellipse cx="400" cy="330" fill="#EAF4FC" id="moon_blue_white" rx="300" ry="300" stroke="#000000" stroke-width="0"/>
   <ellipse cx="370" cy="330" fill="#E5E4E2" id="P_platinum" rx="270" ry="270" stroke="#000000" stroke-width="0"/>
   <ellipse cx="300" cy="330" fill="#988969" id="P_platinum_monochromatic" rx="200" ry="200" stroke="#000000" stroke-width="0"/>
+ </g>
+</svg>
+```
+
+## logo5
+
+* eclipse
+
+```
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - https://github.com/SVG-Edit/svgedit-->
+ <g class="layer">
+  <title>M</title>
+  <rect fill="#000000" height="400" id="background" stroke="#000000" stroke-width="0" width="400" x="0" y="0"/>
+  <ellipse cx="200" cy="200" fill="#008000" id="M_small_circle" rx="190" ry="190" stroke="#000000" stroke-width="0"/>
+  <ellipse cx="225" cy="200" fill="#EAF4FC" id="M_small_circle" rx="195" ry="195" stroke="#000000" stroke-width="0"/>
+  <ellipse cx="245" cy="200" fill="#111111" id="M_small_circle" rx="200" ry="200" stroke="#000000" stroke-width="0"/>
  </g>
 </svg>
 ```
