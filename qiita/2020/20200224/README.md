@@ -347,6 +347,9 @@ df = df.withColumn("hour", F.hour(F.col("timestamp")))
 df = df.withColumn("hour", F.date_trunc("hour", "datetime"))
 df = df.withColumn("week", F.date_trunc("week", "datetime"))
 
+# 時間の加算
+df = df.withColumn('hour', F.col("hour") + F.expr('INTERVAL 2 HOURS'))
+df1.show(truncate=False)
 ```
 
 このほかにもたくたん `withColumn`にて利用できる関数はたくさんあります。
@@ -619,3 +622,6 @@ for row in df.rdd.collect():
 * [Pyspark dataframe操作](https://qiita.com/wwacky/items/e687c0ef05ae7f1de980)
 * [SparkSQLリファレンス](https://x1.inkenkun.com/archives/1202)
 * [select_list](https://stackoverflow.com/questions/37580782/pyspark-collect-set-or-collect-list-with-groupby)
+* [Add hour](https://www.datasciencemadesimple.com/add-hours-minutes-and-seconds-to-timestamp-in-pyspark/)
+
+
