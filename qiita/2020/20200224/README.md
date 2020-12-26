@@ -25,7 +25,7 @@
 ## 計算リソース使用状況の確認
 データの処理が遅い場合は、`Ganglia`を使って計算リソースの使用状況を見てみると良いです。
 
-特に、ネットワーク通信量（＝データ転送量）が低くて、処理に時間がかかることが多いです。
+特に、ネットワーク通信量（＝データ転送量）が低くて、処理時間が長くなる傾向にあります。
 この場合は、以下のような方法で対策をすると解決する場合があります。
 
 * 単一ファイルよりも分散ファイルを読み込む
@@ -378,7 +378,7 @@ df = left_df.join(right_df, on=["id", "dt"])
 ```
 
 * F.broadcast() join: データを各クラスタに効率的に分配し、結合する方法
-  * 各データフレームのデータサイズが以下のように不均衡の場合に使うと効率が上昇（することがある）
+  * 各データフレームのデータサイズが以下のように不均衡の場合に使うと効率が上昇
     * left_df: データ量：多、例：実データ
     * right_df: データ量：少、例：マスタデータ
 
@@ -623,5 +623,3 @@ for row in df.rdd.collect():
 * [SparkSQLリファレンス](https://x1.inkenkun.com/archives/1202)
 * [select_list](https://stackoverflow.com/questions/37580782/pyspark-collect-set-or-collect-list-with-groupby)
 * [Add hour](https://www.datasciencemadesimple.com/add-hours-minutes-and-seconds-to-timestamp-in-pyspark/)
-
-
