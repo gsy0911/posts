@@ -2,7 +2,7 @@
 
 | Qiita リンク | GitHub 内記事 | 関連 |
 |:---|:---|:---:|
-| [【備忘録・随時更新】AzureFunctionsのあれこれ](https://qiita.com/gsy0911/items/2aecefa94db0e8443b10) | [20201228](./20201228) | Azure |
+| [【備忘録・随時更新】AzureFunctionsのあれこれ](https://qiita.com/gsy0911/items/2aecefa94db0e8443b10) | [20201228](./2020/20201228) | Azure |
 | [【備忘録】初めてのAzureFunctionsのデプロイ](https://qiita.com/gsy0911/items/61198607476ac686ce6f) | []() |  |
 | [reInvent2020で発表されたLambdaContainerをCDKで実装してみる](https://qiita.com/gsy0911/items/943533045bec5d7de2b1) | []() |  |
 | [CDKのサンプルプロジェクトのリポジトリを作成・公開した](https://qiita.com/gsy0911/items/4e5186c4c79e3ba0327b) | []() |  |
