@@ -66,7 +66,7 @@ from pyspark.sql.window import Window
 
 * AWS 上の`EMR`を利用する場合は、インスタンス上の時刻が`UTC`のため、`JST`に設定
 
-```
+```python
 spark.conf.set("spark.sql.session.timeZone", "Asia/Tokyo")
 ```
 
@@ -74,7 +74,7 @@ spark.conf.set("spark.sql.session.timeZone", "Asia/Tokyo")
 `EMR`の`JupyterHub`上では必要ありませんが、`Python`の script で実行する場合は、
 `spark`のインスタンス初期化が必要です。
 
-```
+```python
 # spark initialization
 spark = SparkSession.builder.appName("{your app name here}").getOrCreate()
 ```
@@ -84,13 +84,13 @@ spark = SparkSession.builder.appName("{your app name here}").getOrCreate()
 
 * 文字列から読み込む場合
 
-```
+```python
 df = spark.read.parquet(path)
 ```
 
 * `*`を利用して複数ファイル／フォルダを一度に読み込み可能
 
-```
+```python
 # dt=2020-01-01/ 以下にあるファイルを全て読み込む
 df = spark.read.parquet("s3://some-bucket/data/dt=2020-01-01/*.parquet")
 
@@ -100,14 +100,14 @@ df = spark.read.parquet("s3://some-bucket/data/dt=2020-01-*/*.parquet")
 
 * from list<string>: 複数フォルダにまたがる場合はこちらでも可
 
-```
+```python
 # pathsリストに含まれるパスにあるファイルを読み込む
 df = spark.read.parquet(*paths)
 ```
 
 * `partition`を利用していて、パーティションを読み込んだデータフレームのカラムに入れたい場合
 
-```
+```python
 # partitionを列に加えて読み込む
 df = spark.read.option("basePath", parent_path).parquet(*paths)
 ```
@@ -117,7 +117,7 @@ df = spark.read.option("basePath", parent_path).parquet(*paths)
 遅延評価した結果をメモリに保存しておくことで、高速に処理が可能になります。
 よく利用するデータを`cache()`し、特に処理の後段で利用するのがよいです。
 
-```
+```python
 # オンメモリのキャッシュ
 df = df.cache()
 # または
@@ -127,17 +127,17 @@ df = df.persist()
 
 * データ型の確認
 
-```
+```python
 df.printSchema()
 
-root
- |-- id: string (nullable = true)
- |-- name: string (nullable = true)
+# root
+# |-- id: string (nullable = true)
+# |-- name: string (nullable = true)
 ```
 
 ## データ出力
 
-```
+```python
 # csv（この場合はheaderが付与されない）
 df.write.csv(path)
 
@@ -147,7 +147,7 @@ df.write.parquet(path)
 
 * header: csv の場合のみ注意が必要
 
-```
+```python
 # csvの場合はheaderの出力設定をしないと付与されない
 df.write.mode("overwrite").option("header", "True").csv(path)
 # or
@@ -158,7 +158,7 @@ df.write.parquet(path)
 
 * compression: 圧縮
 
-```
+```python
 # gzip with csv
 df.write.csv(path, compression="gzip")
 
@@ -169,7 +169,8 @@ df.write.option("compression", "snappy").parquet(path)
 * partitionBy: 出力する際にデータフレームのカラム名で`partition`をしたい場合
 
 以下の例の場合`/dt={dt_col}/count={count_col}/{file}.parquet`というフォルダに出力されます。
-```
+
+```python
 df.repartition("dt", "count").write.partitionBy("dt", "count").parqeut(path)
 ```
 
@@ -177,7 +178,7 @@ df.repartition("dt", "count").write.partitionBy("dt", "count").parqeut(path)
 
 複数処理後に`coalesce`を行うと処理速度が落ちるため、可能ならば一旦通常にファイルを出力し、再度読み込んだものを`coalesce`した方がよいです。
 
-```
+```python
 # 複数処理後は遅くなることがある
 df.coalesce(1).write.csv(path, header=True)
 
@@ -189,13 +190,13 @@ alt_df.coalesce(1).write.csv(path, header=True)
 
 * repartition: 出力するファイルの分割数を指定
 
-```
+```python
 df.repartition(20).write.parquet(path)
 ```
 
 * write.mode(): 出力時の方法を選択可能
 
-```
+```python
 # write.mode()で使用できる引数 'overwrite', 'append', 'ignore', 'error', 'errorifexists'
 # よく利用するのは overwrite
 # 通常は出力先のフォルダにファイルが存在した場合はエラーがでる
@@ -214,7 +215,7 @@ df.write.mode("append").parquet(path)
 
 * 単一カラムの場合
 
-```
+```python
 # 単一カラムのデータフレームを作成
 id_list = ["A001", "A002", "B001"]
 df = spark.createDataFrame(id_list, StringType()).toDF("id")
@@ -222,7 +223,7 @@ df = spark.createDataFrame(id_list, StringType()).toDF("id")
 
 * 複数カラムの場合
 
-```
+```python
 # 中の要素はtuple, 最後にカラムの名前を指定する
 df = spark.createDataFrame([
     ("a", None, None),
@@ -230,14 +231,14 @@ df = spark.createDataFrame([
     ("a", "code2", "name2"),
 ], ["id", "code", "name"])
 
-> df.show()
-+---+-----+-----+
-| id| code| name|
-+---+-----+-----+
-|  a| null| null|
-|  a|code1| null|
-|  a|code2|name2|
-+---+-----+-----+
+# > df.show()
+# +---+-----+-----+
+# | id| code| name|
+# +---+-----+-----+
+# |  a| null| null|
+# |  a|code1| null|
+# |  a|code2|name2|
+# +---+-----+-----+
 
 # =======================
 # rddを一旦利用して作成する場合
@@ -253,17 +254,17 @@ rdd = sc.parallelize(
 )
 df_data = spark.createDataFrame(rdd, ["id","type", "cost", "date", "ship"])
 
-> df.show()
-+---+----+----+------+----+
-| id|type|cost|  date|ship|
-+---+----+----+------+----+
-|  0|   A| 223|201603|PORT|
-|  0|   A|  22|201602|PORT|
-|  0|   A| 422|201601|DOCK|
-|  1|   B|3213|201602|DOCK|
-|  1|   B|3213|201601|PORT|
-|  2|   C|2321|201601|DOCK|
-+---+----+----+------+----+
+# > df.show()
+# +---+----+----+------+----+
+# | id|type|cost|  date|ship|
+# +---+----+----+------+----+
+# |  0|   A| 223|201603|PORT|
+# |  0|   A|  22|201602|PORT|
+# |  0|   A| 422|201601|DOCK|
+# |  1|   B|3213|201602|DOCK|
+# |  1|   B|3213|201601|PORT|
+# |  2|   C|2321|201601|DOCK|
+# +---+----+----+------+----+
 ```
 
 
@@ -273,7 +274,7 @@ df_data = spark.createDataFrame(rdd, ["id","type", "cost", "date", "ship"])
 `PySpark`では「新しい列を追加する処理」を利用して分析することが多いです。
 
 
-```
+```python
 # new_col_nameという新しい列を作成し、1というリテラル値（＝定数）を付与
 df = df.withColumn("new_col_name", F.lit(1))
 ```
@@ -281,7 +282,7 @@ df = df.withColumn("new_col_name", F.lit(1))
 
 * F.input_file_name(): 読み込んだファイル名を取得
 
-```
+```python
 # 読み込んだファイルパスを付与
 df = df.withColumn("file_path", F.input_file_name())
 
@@ -292,7 +293,7 @@ df = df.withColumn("file_name", F.split(col("file_path"), "/").getItem({int: 最
 
 * cast(): 型変換
 
-```
+```python
 # 文字列で指定
 df = df.withColumn("total_count", F.col("total_count").cast("double"))
 
@@ -302,7 +303,7 @@ df = df.withColumn("value", F.lit("1").cast(StringType()))
 
 * F.when().otherwise(): 条件に応じて追加する値を変更
 
-```
+```python
 # 条件に応じた値の列を追加したい場合
 # F.when(condtion, value).otherwise(else_value)
 df = df.withColumn("is_even", F.when(F.col("number") % 2 == 0, 1).otherwise(0))
@@ -314,19 +315,19 @@ df = df.withColumn("search_result", F.when( (F.col("id") % 2 == 0) & (F.col("roo
 
 * isNotNull(): null かどうかを判定
 
-```
+```python
 df = df.withColumn("is_touched", F.col("value").isNotNull())
 ```
 
 * F.regexp_replace(): 正規表現を利用した文字の置換
 
-```
+```python
 df = df.withColumn("replaced_id", F.regexp_replace(F.col("id"), "A", "C"))
 ```
 
 * 時間に関する操作
 
-```
+```python
 # date time -> epoch time
 df = df.withColumn("epochtime", F.unix_timestamp(F.col("timestamp"), "yyyy-MM-dd HH:mm:ssZ"))
 
@@ -359,7 +360,7 @@ df1.show(truncate=False)
 
 ２つの`DataFrame`を横／縦に結合するメソッドは`join()/union()`です。
 
-```
+```python
 # onで結合する列を指定する
 df = left_df.join(right_df, on="id")
 
@@ -373,7 +374,7 @@ df = left_df.join(right_df, on="id", how="inner")
 
 * 複数カラムで結合
 
-```
+```python
 df = left_df.join(right_df, on=["id", "dt"])
 ```
 
@@ -382,13 +383,13 @@ df = left_df.join(right_df, on=["id", "dt"])
     * left_df: データ量：多、例：実データ
     * right_df: データ量：少、例：マスタデータ
 
-```
+```python
 df = left_df.join(F.broadcast(right_df), on="id")
 ```
 
 * union(): データフレームを縦方向に結合
 
-```
+```python
 df = upper_df.union(bottom_df)
 ```
 
@@ -398,20 +399,20 @@ df = upper_df.union(bottom_df)
  
 よくカラム名のない csv を読み込んだときに利用することが多いです。
 
-```
+```python
 # カラム名がない場合、`_c0`から`_c{n}`というカラム名が与えられる
 df = df.withColumnRenamed("_c0", "id")
 ```
 
 * select("col_1", "col_2", ...): 列単位で取得
 
-```
+```python
 df = df.select("id")
 ```
 
 * distinct(): 重複削除
 
-```
+```python
 df = df.select("id").distinct()
 # count() と合わせてよく利用する
 # 例：とあるidのユニーク数
@@ -420,13 +421,13 @@ print(df.select("id").distinct().count())
 
 * drop("col_1", "col_2", ...): 列単位で削除
 
-```
+```python
 df = df.drop("id")
 ```
 
 * drop Null Value
 
-```
+```python
 # simple
 df = df.dropna()
 # using subset
@@ -436,29 +437,29 @@ df = df.na.drop(subset=["lat", "lon"])
 
 * collect_list(), collect_set(): 単一のカラムにリストとして値を入力
 
-```
+```python
 # 単純な場合
 df = df.select("id").select(F.collect_list("id"))
 id_list = df.first()[0]
 
-> id_list => ["A001", "A002", "B001"]
+# > id_list => ["A001", "A002", "B001"]
 
 # groupByと合わせて使うことも可能
 df = df.groupBy("id").agg(F.collect_set("code"), F.collect_list("name"))
 
-> 
-+---+-----------------+------------------+
-| id|collect_set(code)|collect_list(name)|
-+---+-----------------+------------------+
-|  a|   [code1, code2]|           [name2]|
-+---+-----------------+------------------+
+# > 
+# +---+-----------------+------------------+
+# | id|collect_set(code)|collect_list(name)|
+# +---+-----------------+------------------+
+# |  a|   [code1, code2]|           [name2]|
+# +---+-----------------+------------------+
 ```
 
 * collect(): 全ての要素を返す
 * take(n): 最初の`n`個の要素を返す
 * first(): 一番最初の要素を返す
 
-```
+```python
 # データフレームの値を直接取得する
 df = df.groupBy().avg()
 avg_attribute = df.collect()[0]
@@ -471,7 +472,7 @@ avg_attribute = df.collect()[0]
 
 `F.col()`を利用して特定のカラムに対してフィルタ処理を適用できます。
 
-```
+```python
 # using spark.function
 df = df.filter(F.col("id") == "A001")
 
@@ -484,7 +485,7 @@ df = df.filter(df.id == "A001")
 
 ただ、可能ならば date_list から`Spark`データフレームを作成し、join したほうがよいです。
 
-```
+```python
 df = df.filter(F.col("dt").isin(date_list))
 ```
 
@@ -492,7 +493,7 @@ df = df.filter(F.col("dt").isin(date_list))
 
 ソートは分散処理では適さない処理のため、あまりしない方が良いです。
 
-```
+```python
 # 単一カラムのみ
 df = df.orderBy("count", ascending=False)
 
@@ -502,7 +503,7 @@ df = df.orderBy(F.col("id").asc(), F.col("cound").desc())
 
 ## groupBy (aggregate)
 
-```
+```python
 # count()
 df = df.groupBy("id").count()
 
@@ -510,30 +511,31 @@ df = df.groupBy("id").count()
 # alias() 関数にてカラム名の変更を行なっている
 # 例：ユーザーの集計
 df = df.groupBy("id").agg(
-  F.count(F.lit(1)).alias("count"),
-  F.mean(F.col("diff")).alias("diff_mean"),
-  F.stddev(F.col("diff")).alias("diff_stddev"),
-  F.min(F.col("diff")).alias("diff_min"),
-  F.max(F.col("diff")).alias("diff_max")
+    F.count(F.lit(1)).alias("count"),
+    F.mean(F.col("diff")).alias("diff_mean"),
+    F.stddev(F.col("diff")).alias("diff_stddev"),
+    F.min(F.col("diff")).alias("diff_min"),
+    F.max(F.col("diff")).alias("diff_max")
 )
 
-> df.show()
-（省略）
+# > df.show()
+# （省略）
 
 # =======================
 # 例：ユーザーの日時ごとの集計
+# =======================
 df = df.groupBy("id", "dt").agg(
   F.count(F.lit(1)).alias("count")
   )
   
-> df.show()
-+---+-----------+------+
-| id|         dt| count|
-+---+-----------+------+
-|  a| 2020/01/01|     7|
-|  a| 2020/01/02|     5|
-|  a| 2020/01/03|     4|
-+---+-----------+------+
+# > df.show()
+# +---+-----------+------+
+# | id|         dt| count|
+# +---+-----------+------+
+# |  a| 2020/01/01|     7|
+# |  a| 2020/01/02|     5|
+# |  a| 2020/01/03|     4|
+# +---+-----------+------+
 
 # ===========================
 # 例：ユーザーの日時・場所ごとの集計
@@ -541,50 +543,50 @@ df = df.groupBy("id", "dt", "location_id").agg(
   F.count(F.lit(1)).alias("count")
   )
 
-> df.show()
-+---+-----------+------------+------+
-| id|         dt| location_id| count|
-+---+-----------+------------+------+
-|  a| 2020/01/01|           A|     2|
-|  a| 2020/01/01|           B|     3|
-|  a| 2020/01/01|           C|     2|
-:   :           :            :      :
-+---+-----------+------------+------+
+# > df.show()
+# +---+-----------+------------+------+
+# | id|         dt| location_id| count|
+# +---+-----------+------------+------+
+# |  a| 2020/01/01|           A|     2|
+# |  a| 2020/01/01|           B|     3|
+# |  a| 2020/01/01|           C|     2|
+# :   :           :            :      :
+# +---+-----------+------------+------+
 ```
 
 
 * countDistinct(): 集計時に重複を削除し、count を行う
 
-```
+```python
 # 例：日付ごとのユーザユニーク数
 df = df.groupBy("dt").agg(countDistinct("id").alias("id_count"))
 
-> df.show()
-+-----------+---------+
-|         dt| id_count|
-+-----------+---------+
-| 2020/01/01|        7|
-| 2020/01/02|        5|
-| 2020/01/03|        4|
-+-----------+---------+
+# > df.show()
+# +-----------+---------+
+# |         dt| id_count|
+# +-----------+---------+
+# | 2020/01/01|        7|
+# | 2020/01/02|        5|
+# | 2020/01/03|        4|
+# +-----------+---------+
 
 # ===============================
 # 例：ユーザごとの接触が1回以上あった日数
 df = df.groupBy("id").agg(countDistinct("dt").alias("dt_count"))
 
-> df.show()
-+---+---------+
-| id| dt_count|
-+---+---------+
-|  a|       10|
-|  b|       15|
-|  c|        4|
-+---+---------+
+# > df.show()
+# +---+---------+
+# | id| dt_count|
+# +---+---------+
+# |  a|       10|
+# |  b|       15|
+# |  c|        4|
+# +---+---------+
 ```
 
 * 要素の指定に list も指定可能
 
-```
+```python
 group_columns = ["id", "dt"]
 df = ad_touched_visit_df.groupBy(*group_columns).count()
 ```
@@ -593,14 +595,14 @@ df = ad_touched_visit_df.groupBy(*group_columns).count()
 
 * row_number(): 行番号を付与
 
-```
+```python
 w = Window().orderBy(F.col("id"))
 df = df.withColumn("row_num", F.row_number().over(w))
 ```
 
 * lag(): 行をずらす
 
-```
+```python
 # 前の行のデータをカラムとして追加
 w = Window.partitionBy("id").orderBy("timestamp")
 df = df.withColumn("prev_timestamp", F.lag(df["timestamp"]).over(w))
@@ -611,9 +613,9 @@ df = df.withColumn("prev_timestamp", F.lag(df["timestamp"]).over(w))
 分散環境と相性が悪いため、強く非推奨です。
 どうしても for じゃないといけない場合にのみ利用するようにした方がいいです。
 
-```
+```python
 for row in df.rdd.collect():
-  do_some_with(row['id'])
+    do_some_with(row['id'])
 ```
 
 
