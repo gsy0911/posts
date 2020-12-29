@@ -1,34 +1,39 @@
-# はじめに
+# 1. はじめに
 
-この記事では、AzureFunctionsでよく私が利用している`HttpTrigger`と`TimerTrigger`を
+この記事では、AzureFunctions でよく私が利用している`HttpTrigger`と`TimerTrigger`を
 デプロイして動かすところまでを解説します。
 
-結構長くなったので、目次を付与しておきます。
+結構長くなったので、目次と簡単な内容を付与しておきます。
 
-1. 前準備
-    1. ローカル環境：AzureFunctionsをデプロイするのに必要なソフトのインストール
-    1. Azureのクラウド環境：AzureFunctionsをデプロイするのに必要なサービスを事前に作成  
-1. AzureFunctionsの種類
-1. AzureFunctionsの実装
-    1. HttpTrigger
-    1. TimerTrigger
-1. AzureFunctionsのデプロイ
+| 節  | 項  | タイトル                      | 内容                                                        |
+| :-: | :-: | :---------------------------- | :---------------------------------------------------------- |
+|  2  |  -  | 前準備                        | -                                                           |
+|     |  1  | - ローカル環境                | AzureFunctions をデプロイするのに必要なソフトのインストール |
+|     |  2  | - Azure のクラウド環境        | AzureFunctions をデプロイするのに必要なサービスを事前に作成 |
+|  3  |  -  | FunctionApp の作成            | コンソールから FunctionApp を作成                           |
+|  4  |  -  | AzureFunctions の種類         | 利用可能な`Trigger`の種類                                   |
+|  5  |  -  | AzureFunctions の実装         | Python スクリプトの作成と修正                               |
+|     |  1  | - requirements.txt の修正     | -                                                           |
+|     |  2  | - HttpTrigger                 | -                                                           |
+|     |  3  | - TimerTrigger                | -                                                           |
+|  6  |  -  | AzureFunctions のデプロイ     | -                                                           |
+|     |  1  | - Makefile を利用したデプロイ | -                                                           |
+|  7  |  -  | AzureFunctions のデバッグ     | コンソールからの実行とデバッグ                              |
 
+# 2. 前準備
 
-# 前準備
+AzureFunctions をデプロイするために、ローカル環境と Azure のクラウド環境側で以下のような準備が必要です。
 
-AzureFunctionsをdeployするために、ローカル環境とAzureのクラウド環境側で以下のような準備が必要です。
+## 2.1 ローカル環境
 
-## ローカル環境
+本記事では Mac で環境構築などを行います。
 
-本記事ではMacで環境構築などを行います。
+AzureFunctions をデプロイするために、以下の 2 つのソフトのインストールが必要です。
 
-AzureFunctionsをデプロイするために、以下の2つのソフトのインストールが必要です。
+- [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)
+- [Azure Function Core Tools](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=macos%2Cpython%2Cbash)
 
-* [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)
-* [Azure Function Core Tools](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=macos%2Cpython%2Cbash)
-
-Macへのインストールは`brew`を利用すれば簡単にできます。
+Mac へのインストールは`brew`を利用すれば簡単にできます。
 
 ```shell
 # Azure CLIのインストール
@@ -42,7 +47,7 @@ $ brew install azure-functions-core-tools@3
 $ az login
 ```
 
-今回デプロイするに当たって利用しているバージョンは次の通りです。
+今回デプロイするに当たって利用したバージョンは次の通りです。
 
 ```shell
 # Azure CLIのバージョン
@@ -55,59 +60,115 @@ $ func --version
 3.0.2912
 ```
 
-## Azureのクラウド環境
+## 2.2 Azure のクラウド環境
 
-Azureのアカウントはすでにあることを前提にしています。
+Azure のアカウントはすでにあることを前提にしています。
 
-AzureFunctionsをデプロイするにあたっては、
+AzureFunctions をデプロイするにあたっては、
 以下のリソースを前もって準備しておくと便利です。
 
-| サービス名 | 用途 | 推奨されるprefix | 必須 |
-|:---:|:---:|:---:|:---:|
-| Resource Group | AzureFunctionsのデプロイに必要なサービスをまとめる | `rg-` | O |
-| StorageAccount | ファイルを保持するストレージ | `st-` | O |
-| Log Analytics | ログを保持する | `log-` | O |
-| Application Insights | ログを表示する | `appi` | O |
-| KeyVault | シークレットなどのコードに直接載せたくない値を保持する | `kv-` | - |
-| AzureIdentity | AzureFunctions外のリソースにアクセスする権限などを管理する | - | - |
-| Api Management | 外部のパートナーや社内の開発者にAPIを公開する | `apim-` | - |
+|      サービス名      |                        用途                         | 推奨される prefix | 必須 |
+| :------------------: | :-------------------------------------------------: | :---------------: | :--: |
+|    Resource Group    | AzureFunctions のデプロイに必要なサービスをまとめる |       `rg-`       |  O   |
+|    StorageAccount    |            ファイルを保持するストレージ             |       `st-`       |  O   |
+|    Log Analytics     |                   ログを保持する                    |      `log-`       |  O   |
+| Application Insights |                   ログを表示する                    |      `appi`       |  O   |
 
 これらのリソースは、基本的には**一度作成した後に作成する必要はありません**。
-ただ、今回はAzureFunctionsをコンソールから作成していきます。
+ただ、今回は AzureFunctions をコンソールから作成していきます。
 すでに、上記の必須なサービスがある場合は、次節まで読み飛ばしてもらって大丈夫です。
 
-また、これらのサービスの名前のprefixは、Azureが公式に推薦する形式があります。
+また、これらのサービスの名前の prefix は、Azure が公式に推薦する形式があります。
 そのため、この[公式ドキュメント](https://docs.microsoft.com/ja-jp/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations)をみておくことをお勧めします。
 （今回デプロイしたサービスは一部その例に従ってはいません）
 
-### Resource Group
+今回作成したサービスは以下の通りです。
 
-### Storage Account
+- `appi-gsy0911`: ログ関連
+- `gsy0911stdata`: データなどを保存しておくためのユーザが利用するストレージ
+- `gsy0911stsys`: AzureFunctions などのシステムが利用するストレージ
+- `log-gsy0911`: ログ関連
 
-### Log Analytics + Application Insights
+![スクリーンショット 2020-12-27 14.42.07.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/24001515-5d9f-b8e4-44ba-649bf235cf8b.png)
 
-### Key Vault
+# 3. FunctionApp の作成
 
-### AzureIdentity
+コンソールから AzureFunctions の作成します。
+検索ウィンドウにて`Function App`と入れると出てきます。
 
-# AzureFunctionsの種類
+![スクリーンショット 2020-12-27 18.31.07.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/a18ef5a2-861b-d3a2-1f2f-148f690b5af1.png)
 
-AzureFunctionsは、様々な起動方法（`トリガー`）があります。
-特に私が利用することが多いのは次の4つです。
+名前が AzureFunctions ではない理由は
+この`Function App`の中に複数個の AzureFunctions を作成してくためだと思います。
+Create ボタンを押下し、作成してきます。
 
-* HttpTrigger
-* TimerTrigger
-* QueueTrigger
-* BlobTrigger
+![スクリーンショット 2020-12-27 18.31.18.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/7754a85d-b0da-6de6-6908-0d49f0e6fbce.png)
+
+`Basics`での必須項目を埋めていきます。
+
+|        項目        |        値        |
+| :----------------: | :--------------: |
+| Functions App name | gsy0911-function |
+|      Publish       |       Code       |
+|   Runtime stack    |      Python      |
+|      Version       |     3.8 (※1)     |
+|       Region       |    Japan East    |
+
+※1: ここはローカルの python の環境と必ずしも合わせる必要はありません
+![スクリーンショット 2020-12-27 18.31.51.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/c9b62b6d-770c-76ad-7961-c6f9c30eefed.png)
+
+`Hosting`の項目では、さっき作成した`Storage Account`の`gsy0911sys`を選択します。
+
+|       項目       |        値         |
+| :--------------: | :---------------: |
+| Storage Account  |    gsy0911sys     |
+| Operating System |       Linux       |
+|    Plan type     | Consumption（※2） |
+
+※2: 最近利用できるようになりました。他のプランもあります。
+
+![スクリーンショット 2020-12-27 18.32.06.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/9f890af7-871b-5499-d1d4-7a461d5a43fd.png)
+
+`Monitoring`の項目も埋めていきます。
+
+|         項目         |      値      |
+| :------------------: | :----------: |
+| Application Insights | appi-gsy0911 |
+
+![スクリーンショット 2020-12-27 18.32.24.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/5e81bb54-55ee-8f18-bc7e-00927fe5f06e.png)
+
+`Tags`は好きな Tag を設定してください。
+ここまで作成したら、Create します。
+
+![スクリーンショット 2020-12-27 18.33.36.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/651e64f8-c9ea-9f37-a6a4-e3fd32017c61.png)
+
+これで、作成すべきサービスは作り終えました。
+
+# 4. AzureFunctions の種類
+
+AzureFunctions は、様々な起動方法（`トリガー`）があります。
+特に私が利用するのは次の４つです。
+それぞれ、その名の通りなのですが、簡単に説明します。
+
+- HttpTrigger
+  - `GET`や`POST`などでアクセス可能な URL を発行し、URL にアクセスがあったら起動する
+- TimerTrigger
+  - cron 式で実行タイミングを決めて、時間になったら起動する
+- QueueTrigger
+  - 設定した Queue に message が enqueue されたら起動する
+- BlobTrigger
+  - 特定の Blob にファイルの入力などがあったら起動する
 
 そのほかのトリガーの例に関しては、[公式ドキュメント](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-triggers-bindings?tabs=csharp)を確認してください。
 また、今回は特に利用しないので説明しませんが、`トリガー`の他に`バインディング`という概念もあります。
 詳しくは、上記の公式ドキュメントに解説されていますので読んでください。
 
-# AzureFunctionsの実装
+今回は上記の関数のうち`HttpTrigger`と`TimerTrigger`を実装してみます。
+
+# 5. AzureFunctions の実装
 
 初めから作成する場合は以下のコマンドを実行すると、必要なファイルを生成してくれます。
-実行するruntimeは今回はPythonなので3を入力します。
+実行する runtime は Python なので 3 を入力します。
 
 ```shell
 
@@ -138,10 +199,9 @@ $ tree
 └── requirements.txt
 ```
 
-これにて、AzureFunctionsにデプロイするのに必要なファイルが生成されました。
+これで、AzureFunctions へデプロイするのに必要なファイルが生成されました。
 
-
-## `requirements.txt`の修正
+## 5.1 `requirements.txt`の修正
 
 バリデーション用に`cerberus`というライブラリを追加しておきます。
 
@@ -152,9 +212,9 @@ azure-functions
 + cerberus
 ```
 
-## HttpTriggerの作成
+## 5.2 HttpTrigger の作成
 
-はじめにHttpTriggerを作成します。
+はじめに HttpTrigger を作成します。
 
 ```shell
 # test_function/以下にて実行
@@ -172,10 +232,10 @@ Select a number for template:
 10. Timer trigger
 Choose option: 5 {<- type `5`}
 HTTP trigger
-Function name: [HttpTrigger] test_http_trigger {<- type `test_http_trigger`}
-Writing {current_directory}/test_http_trigger/__init__.py
-Writing {current_directory}/test_http_trigger/function.json
-The function "test_http_trigger" was created successfully from the "HTTP trigger" template.
+Function name: [HttpTrigger] http_trigger {<- type `http_trigger`}
+Writing {current_directory}/http_trigger/__init__.py
+Writing {current_directory}/http_trigger/function.json
+The function "http_trigger" was created successfully from the "HTTP trigger" template.
 
 # HttpTriggerの関数を作成したあとのファイル構成
 $ tree
@@ -183,12 +243,12 @@ $ tree
 ├── host.json
 ├── local.settings.json
 ├── requirements.txt
-└── test_http_trigger
+└── http_trigger
     ├── __init__.py
     └── function.json
 ```
 
-### HttpTriggerの`functions.json`
+### 5.2.1 HttpTrigger の`functions.json`
 
 ここの`name`は、`__init__.py`の`main()`関数の引数の名前と一致させる必要があります。
 
@@ -216,8 +276,8 @@ $ tree
 }
 ```
 
-今回は`POST`メソッドを受け取るAzureFunctionsを作成したいので、`get`を削除します。
-また、API Managementと統合した際にURLのrouteを設定したいので、`tech/qiita`を追記します。
+今回は`POST`メソッドを受け取る AzureFunctions を作成したいので、`get`を削除します。
+また、API Management と統合した際に URL の route を設定したいので、`tech/qiita`を追記します。
 
 ```diff:function.json
 {
@@ -244,13 +304,15 @@ $ tree
 
 ```
 
-### HttpTriggerの`__init__.py`
+### 5.2.2 HttpTrigger の`__init__.py`
 
-デフォルトで作成されるのは以下のテンプレートですが、
-* `logging`モジュールをそのまま利用していたり、
-* `HttpResponse`の返り値の長さが120文字を超えていたり（`PEP8`違反）
-* ValueErrorの例外処理を`pass`していたり
-お世辞にも参考にして良いサンプルプログラムではないです。
+デフォルトで作成されるのは以下のテンプレートです。
+しかし、以下のよくない点が挙げられます。
+
+- `logging`モジュールをそのまま利用していたり、
+- `HttpResponse`の返り値の長さが 120 文字を超えていたり（`PEP8`違反）
+- ValueError の例外処理を`pass`していたり
+  お世辞にも参考にして良いサンプルプログラムではないです。
 
 ```python:修正前の__init__.py
 import logging
@@ -281,7 +343,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 ```
 
 そのため、全て書き換えます。
-ここで、先ほどrequirementsに追記しておいたcerberusというライブラリを利用して入力パラメータのバリデーションを行なっています。
+ここで、先ほど requirements に追記しておいた cerberus というライブラリを利用して入力パラメータのバリデーションを行なっています。
 
 ```python:修正後の__init__.py
 
@@ -313,10 +375,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     payload = req.get_json()
 
     # バリデータを作成
-    validator = Validator(SCHEMA)
+    # 不明なパラメータの入力も`allow_unknown`で許可している
+    validator = Validator(SCHEMA, allow_unknown=True)
 
     # バリデーションがうまく通らない場合エラーを吐く
-    # 不明なパラメータの入力も`allow_unknown`で許可している
     if not validator.validate(payload, allow_unknown=True):
         return func.HttpResponse(
             body=json.dumps(validator.errors),
@@ -335,11 +397,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 ```
 
-これにてHttpTriggerのコードはできました。
+これにて HttpTrigger のコードは完成です。
 
-## TimerTriggerの作成
+## 5.3 TimerTrigger の作成
 
-次にTimerTriggerを作成します。
+次に TimerTrigger を作成します。
 先ほどと同様にコマンドからサンプルのプログラムを作成します。
 
 ```shell
@@ -357,11 +419,11 @@ Select a number for template:
 10. Timer trigger
 Choose option: 10 {<- type `10`}
 Timer trigger
-Function name: [TimerTrigger] test_timer_trigger {<- type `test_timer_trigger`}
-Writing {current_directory}/test_timer_trigger/readme.md
-Writing {current_directory}/test_timer_trigger/__init__.py
-Writing {current_directory}/test_timer_trigger/function.json
-The function "test_timer_trigger" was created successfully from the "Timer trigger" template.
+Function name: [TimerTrigger] timer_trigger {<- type `timer_trigger`}
+Writing {current_directory}/timer_trigger/readme.md
+Writing {current_directory}/timer_trigger/__init__.py
+Writing {current_directory}/timer_trigger/function.json
+The function "timer_trigger" was created successfully from the "Timer trigger" template.
 
 # 作成されたファイルの確認
 $ tree
@@ -369,19 +431,19 @@ $ tree
 ├── host.json
 ├── local.settings.json
 ├── requirements.txt
-├── test_http_trigger
+├── http_trigger
 │   ├── __init__.py
 │   └── function.json
-└── test_timer_trigger
+└── timer_trigger
     ├── __init__.py
     ├── function.json
     └── readme.md
 ```
 
-### TimerTriggerの`functions.json`
+### 5.3.1 TimerTrigger の`functions.json`
 
 実行タイミングは`schedule`項目にて修正できます。
-この例だと5分ごとに実行されるようになっています。
+この例だと 5 分ごとに実行される設定です。
 
 ```json:functions.json
 {
@@ -397,7 +459,10 @@ $ tree
 }
 ```
 
-### TimerTriggerの`__init__.py`
+### 5.3.2 TimerTrigger の`__init__.py`
+
+TimerTrigger の実行スクリプトです。
+こちらも、書き換えます。
 
 ```python:修正前の__init__.py
 import datetime
@@ -417,9 +482,127 @@ def main(mytimer: func.TimerRequest) -> None:
 
 ```
 
+こちらが修正後の実行スクリプトです。
+特に処理は記述していません。
 
-# AzureFunctionsのデプロイ
+```python:修正後の__init__.py
+from datetime import datetime, timezone, timedelta
+from logging import getLogger, INFO
 
-デプロイには`Makefile`を利用すると便利です。
+import azure.functions as func
 
-# 終わりに
+
+logger = getLogger()
+logger.setLevel(INFO)
+
+
+def main(mytimer: func.TimerRequest):
+    # 日時の取得
+    tz_jst = timezone(timedelta(hours=9))
+    today = datetime.now(tz=tz_jst)
+
+    logger.info(f"today: {today}")
+    # 以下から日付に関する処理を行う
+
+```
+
+以上で、TimerTrigger のスクリプトも完成です。
+
+# 6. AzureFunctions のデプロイ
+
+AzureFunctions へのデプロイは、`$ az login`にてログインした環境に
+自動的にデプロイされるようになります。
+
+複数の subscription を保有している場合は、明示的に選択する必要があります。
+
+## 6.1 Makefile を利用したデプロイ
+
+デプロイには`Makefile`を利用します。
+`shell script`などでも良いのですが、Makefile の方がデフォルトで目的ごとにコマンドで分けられるの便利なためです。
+`FUNCTION_APP_NAME`を変更すれば、どの AzureFunctions のデプロイでも利用可能です。
+
+```makefile:Makefile
+# function app name to deploy
+FUNCTION_APP_NAME := gsy0911-function
+
+
+.PHONY: help
+help: ## print this message ## make
+	@echo "publish to $(FUNCTION_APP_NAME)"
+	@printf "\033[36m%-30s\033[0m %-50s %s\n" "[Sub command]" "[Description]" "[Example]"
+	@grep -E '^[/a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | perl -pe 's%^([/a-zA-Z_-]+):.*?(##)%$$1 $$2%' | awk -F " *?## *?" '{printf "\033[36m%-30s\033[0m %-50s %s\n", $$1, $$2, $$3}'
+
+.PHONY: clean
+clean: ## clean the function app ## make clean
+	func azure functionapp publish $(FUNCTION_APP_NAME) --nozip
+
+.PHONY: publish
+publish: ## publish to the function app ## make publish
+	func azure functionapp publish $(FUNCTION_APP_NAME)
+
+
+```
+
+上記の Makefile があるディレクトリにて、以下の`$ make publish`を実行すれば、
+定数で指定した AzureFunctions へデプロイ可能です。
+
+```shell
+# Makeコマンドの一覧を表示
+$ make
+publish to gsy0911-function
+[Sub command]                  [Description]                                      [Example]
+help                           print this message                                 make
+clean                          clean the function app                             make clean
+publish                        publish to the function app                        make publish
+
+# AzureFunctionsへデプロイ
+$ make publish
+...
+Remote build succeeded!
+Syncing triggers...
+Functions in gsy0911-function:
+    http_trigger - [httpTrigger]
+        Invoke url: https://gsy0911-function.azurewebsites.net/api/tech/qiita?code=***
+
+    timer_trigger - [timerTrigger]
+
+```
+
+デプロイが完了すると、コンソールから確認できます。
+デプロイした Functions の名前は、ローカルで作成したフォルダの名前と合致します。
+
+![スクリーンショット 2020-12-27 19.04.33.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/d527c054-6b87-e7e6-7da2-443854cd917d.png)
+
+# 7. AzureFunctions のデバッグ
+
+簡単なテストならば、コンソールから AzureFunctions を直接実行するのがおすすめです。
+
+テスト実行したい関数を選択し、`Code + Test`から`Test/Run`を選択します。
+
+![スクリーンショット 2020-12-27 19.07.20.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/24952ad7-ff65-0290-9399-f70ed68c1071.png)
+
+右から画面が現れるのでそこに json 形式のデータを入れて、`Run`を実行します。
+
+![スクリーンショット 2020-12-27 19.10.14.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/b7d43575-c16e-ced6-e026-c5dbaca9ac43.png)
+
+成功すれば、設定した値が返ってきていることがわかります。
+
+![スクリーンショット 2020-12-27 19.21.54.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/4c4cc17a-3ea5-15bf-0c97-3048e42b92b8.png)
+
+また、実行結果のログなどは`Monitor`というところに出力されます。
+（ただし、実行のログが出力されるのは、関数の実行が完了してから 3 分ほどのラグがあります）
+
+![スクリーンショット 2020-12-27 19.30.29.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/260295/c765c29e-e4b0-0e13-a191-116dcbb21bdc.png)
+
+TimerTrigger でも同様の方法でテスト実行可能です。
+
+# 8. 終わりに
+
+本記事では、以下の内容に関して簡単に触れました。
+
+- AzureFunctions に必要なサービスのデプロイ
+- AzureFunctions の作成・デプロイ・デバッグ
+  - `HttpTrigger`と`TimerTrigger`
+  - Makefile を利用したデプロイ
+
+今回触れなかった[QueueTrigger に関する記事](https://qiita.com/gsy0911/items/e68d06dfd8211d53b823)もありますので、合わせてどうぞ。
