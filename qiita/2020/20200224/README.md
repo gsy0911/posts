@@ -194,6 +194,14 @@ alt_df.coalesce(1).write.csv(path, header=True)
 df.repartition(20).write.parquet(path)
 ```
 
+* coalesce と repartition の違い
+
+repartition と coalesce はどちらもデータを数に分割することそのものは同じだけれど、 実行後の DataFrame の結果が異なる。
+* repartition: データが均一になり、順序は保たれない
+* coalesce: データが不均一になるが、順序は保たれる
+
+[参考](http://www.ne.jp/asahi/hishidama/home/tech/scala/spark/partition.html)
+
 * write.mode(): 出力時の方法を選択可能
 
 ```python
@@ -385,6 +393,23 @@ df = left_df.join(right_df, on=["id", "dt"])
 
 ```python
 df = left_df.join(F.broadcast(right_df), on="id")
+```
+
+* 複数の条件結合
+
+注意点として、`left_df`と`right_df`とで同じ名前のカラムがあるとそのあとの処理がややこしくなります。
+そのため、`join`する前に予めカラムの名前を被らないようにしておくと良いです。
+
+```python
+df = left_df.join(
+    F.broadcast(right_df),
+    on=(
+        (right_df['start_date'] <= left_df['dt']) & (left_df['dt'] <= right_df['end_date']) \
+        & (left_df['id'] == right_df['id']) \
+        & (left_df["hour"].between(right_df['start'], right_df['close']))
+    ),
+    how="inner"
+)
 ```
 
 * union(): データフレームを縦方向に結合
@@ -606,6 +631,38 @@ df = df.withColumn("row_num", F.row_number().over(w))
 # 前の行のデータをカラムとして追加
 w = Window.partitionBy("id").orderBy("timestamp")
 df = df.withColumn("prev_timestamp", F.lag(df["timestamp"]).over(w))
+```
+
+## User Defined Function (UDF)
+
+ユーザ独自の関数を作成してそれを呼び出すことができます。
+
+```python
+
+@F.udf(returnType=StringType())
+def convert(input_str):
+    return f"{input_str}_suffix"
+
+
+df = df.withColumn("added", convert(F.col("input_col")))
+```
+
+また、filter に関しても UDF を作成可能です。
+
+```python
+@F.udf(returnType=BooleanType())
+def regex_filter(x):
+    regexs = ['.*ALLYOURBASEBELONGTOUS.*']
+    
+    if x and x.strip():
+        for r in regexs:
+            if re.match(r, x, re.IGNORECASE):
+                return True
+    
+    return False 
+
+
+df = df.filter(regex_filter(F.col("filter_target_col")))
 ```
 
 ## loop処理
