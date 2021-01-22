@@ -63,9 +63,9 @@
 | 2-a |  | `Real World HTTP`の 8 章まで読み、 Python のサンプルを作成する | 2 月末まで |
 | 2-b |  | `Real World HTTP`の簡単なまとめを作成する | 2 月末まで |
 | 3 | JavaScript, typescript などの基礎を知り尽くす | - |  |
-| 3-a |  | Node.js 上での実行と環境構築について |  |
-| 3-b |  | yarn との違いの確認と npm vs npx |  |
-| 3-c |  | 有名な package などの確認 |  |
+| 3-a |  | Node.js 上での実行と環境構築について | 雰囲気理解した |
+| 3-b |  | yarn との違いの確認と npm vs npx | 雰囲気理解した |
+| 3-c |  | 有名な package などの確認 | `typescript`に関しては押さえた |
 | 3-d |  | Babel, webpack の理解 |  |
 | 3-e |  | Promise, async/await の理解 |  |
 | 4 | k8s の概念を理解し、サービスを作成する | - |  |
