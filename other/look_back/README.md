@@ -61,8 +61,8 @@
 | 1-a |  | とる資格を決める | 決めた |
 | 1-b |  | `Solutions Architect`の資格を６月に取得する |  |
 | 2 | ネットワークとインターネットの仕組みを理解する | - |  |
-| 2-a |  | `Real World HTTP`の 8 章まで読み、 Python のサンプルを作成する | 2 月末まで |
-| 2-b |  | `Real World HTTP`の簡単なまとめを作成する | 2 月末まで |
+| 2-a |  | `Real World HTTP`の 8 章まで読み、 Python のサンプルを作成する | 4 月末まで |
+| 2-b |  | `Real World HTTP`の簡単なまとめを作成する | 4 月末まで |
 | 3 | JavaScript, typescript などの基礎を知り尽くす | - |  |
 | 3-a |  | Node.js 上での実行と環境構築について | 理解した |
 | 3-b |  | yarn との違いの確認と npm vs npx | 理解した |
@@ -70,6 +70,8 @@
 | 3-d |  | Babel, webpack の理解 | 雰囲気 |
 | 3-e |  | Promise, async/await の理解 | おおよそ |
 | 3-f |  | `typescript`の`template-repository`を作成 | できた |
+| 3-f |  | `typescript`本を一通り読み切る |  |
+| 3-f |  | `electron`の`template-repository`を作成 |  |
 | 4 | k8s の概念を理解し、サービスを作成する | - |  |
 | 5 | アウトプットは月２項目を目安に行う | - |  |
 | 5-a |  | Qiita は月１本（備忘録） |  |
@@ -88,6 +90,14 @@
         - `Redux`などはまだわかっていない
     - それ以外の項目に関しては、進捗なし。
     - ３０日チャレンジはに失敗した。
+- 2021/02
+    - AWS の新しいサービスを深く触った。
+        - `CodePipeline`
+        - `CodeBuild`
+        - `ElasticBeanstalk`
+        - `ElasticLoadBalance`
+    - `typescript + React`で様々なコンポーネントを触れるようになった
+    - `Python`でログの出力を拡張できるようになった
 
 ### 30 day challenge
 
