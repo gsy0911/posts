@@ -70,15 +70,18 @@
 | 3-d |  | Babel, webpack の理解 | 雰囲気 |
 | 3-e |  | Promise, async/await の理解 | おおよそ |
 | 3-f |  | `typescript`の`template-repository`を作成 | できた |
-| 3-f |  | `typescript`本を一通り読み切る |  |
-| 3-f |  | `electron`の`template-repository`を作成 |  |
+| 3-g |  | `typescript`本を一通り読み切る |  |
+| 3-h |  | `electron`の`template-repository`を作成 |  |
+| 3-i |  | Vue.js を利用したウェブページの作成 |  |
 | 4 | k8s の概念を理解し、サービスを作成する | - |  |
 | 5 | アウトプットは月２項目を目安に行う | - |  |
 | 5-a |  | Qiita は月１本（備忘録） |  |
+| 5-a-1 |  | Python のログ |  |
+| 5-a-2 |  | ElasticBeanstalk の利用 |  |
 | 5-b |  | note にも投稿（まとめ記事） |  |
 | 6 | Node.js にてライブラリ／モジュールの作成 | - |  |
-| 7 | Vue.js を利用したウェブページの作成 | - |  |
-| 8 | 映画をたくさん見る | - |  |
+| 7 | 株プロジェクト | - |  |
+| 8 | 機械学習に関して知識の再吸収 | - |  |
 | 9 | ワインを月１本飲む | - |  |
 
 #### 振り返り
@@ -97,7 +100,10 @@
         - `ElasticBeanstalk`
         - `ElasticLoadBalance`
     - `typescript + React`で様々なコンポーネントを触れるようになった
+    - `typescript + CDK`でサービスを構築した
     - `Python`でログの出力を拡張できるようになった
+    - アウトプットが全然できていない
+- 2021/03
 
 ### 30 day challenge
 
@@ -105,7 +111,9 @@
 | 項番 | 期間 | 目標 | 達成状況 |
 |:---:|:---:|:---|:---|
 | 1 | 2021/01/05 ~ 2021/02/05 | 糖分を断つ（ジュースとチョコなどの摂取をやめる） | 失敗 |
-| 2 | 2021/02/08 ~ 2021/02/29 | インスタント食品を断つ |  |
+| 2 | 2021/02/08 ~ 2021/02/28 | インスタント食品を断つ | 成功 |
+| 3 | 2021/03/01 ~ 2021/03/31 | OLP を意識して働く |  |
+
 
 * [TED](https://www.ted.com/talks/matt_cutts_try_something_new_for_30_days?language=ja#t-189658)
 
