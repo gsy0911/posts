@@ -72,7 +72,7 @@
 | 3-d |  | Babel, webpack の理解 | 雰囲気 |
 | 3-e |  | Promise, async/await の理解 | おおよそ |
 | 3-f |  | `typescript`の`template-repository`を作成 | できた |
-| 3-g |  | `typescript`本を一通り読み切る |  |
+| 3-g |  | `typescript`本を一通り読み切る(5月末) |  |
 | 4 | k8s の概念を理解し、CDKでデプロイしてみる | - |  |
 | 5 | アウトプットは月２項目を目安に行う | - |  |
 | 5-a |  | Qiita は月１本（備忘録） |  |
@@ -128,6 +128,10 @@
     - PHPもdockerを通じて少しだけ触った。
     - カメラを購入した
     - zenn でコンテンツの作成を開始
+- 2021/05
+    - zennでのloggerコンテンツ(ver1.0.0)作成（予定）
+    - zennでのCDK with TypeScriptコンテンツ(ver1.0.0)作成（予定）
+    - typescriptの本を一通り読み切る（予定）    
 
 ### 30 day challenge
 
