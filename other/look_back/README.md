@@ -61,7 +61,7 @@
 |:---:|:---|:---|:---|
 | 1 | AWS の資格をとる | - |  |
 | 1-a |  | とる資格を決める | 決めた |
-| 1-b |  | `Solutions Architect`の資格を６月に取得する |  |
+| 1-b |  | `Solutions Architect`の資格を8月に取得する |  |
 | 2 | ネットワークとインターネットの仕組みを理解する | - |  |
 | 2-a |  | `Real World HTTP`の 8 章まで読み、 Python のサンプルを作成する | 4 月末まで |
 | 2-b |  | `Real World HTTP`の簡単なまとめを作成する | 4 月末まで |
@@ -73,16 +73,15 @@
 | 3-e |  | Promise, async/await の理解 | おおよそ |
 | 3-f |  | `typescript`の`template-repository`を作成 | できた |
 | 3-g |  | `typescript`本を一通り読み切る(5月末) |  |
-| 4 | k8s の概念を理解し、CDKでデプロイしてみる | - |  |
-| 5 | アウトプットは月２項目を目安に行う | - |  |
-| 5-a |  | Qiita は月１本（備忘録） |  |
-| 5-a-1 |  | Python のログ(5月中) |  |
-| 5-a-2 |  | ElasticBeanstalk の利用 |  |
-| 5-a-3 |  | AWS Security の話 |  |
-| 5-a-4 |  | AWS CDK with TypeScriptをzennのコンテンツで作成する(5月中) |  |
-| 5-b |  | note にも投稿（まとめ記事） |  |
-| 6 | Node.js にてライブラリ／モジュールの作成 | - |  |
-| 7 | 株プロジェクト | - |  |
+| 4 | アウトプットは月２項目を目安に行う | - |  |
+| 4-a |  | Qiita は月１本（備忘録） |  |
+| 4-a-1 |  | Python のログ(5月中) |  |
+| 4-a-2 |  | ElasticBeanstalk の利用 |  |
+| 4-a-3 |  | AWS Security の話 |  |
+| 4-a-4 |  | AWS CDK with TypeScriptをzennのコンテンツで作成する(5月中) |  |
+| 4-b |  | note にも投稿（まとめ記事） |  |
+| 5 | Node.js にてライブラリ／モジュールの作成 | - |  |
+| 6 | 株プロジェクト | - |  |
 
 #### 振り返り
 
@@ -129,9 +128,15 @@
     - カメラを購入した
     - zenn でコンテンツの作成を開始
 - 2021/05
-    - zennでのloggerコンテンツ(ver1.0.0)作成（予定）
-    - zennでのCDK with TypeScriptコンテンツ(ver1.0.0)作成（予定）
-    - typescriptの本を一通り読み切る（予定）    
+    - zennでのloggerコンテンツ(ver1.0.0)作成（予定→未達）
+    - zennでのCDK with TypeScriptコンテンツ(ver1.0.0)作成（予定→未達）
+    - typescriptの本を一通り読み切る（予定→未達）    
+- 2021/06
+    - ne10を作成した。electronの知識を得た
+    - AWSの資格取得してない
+    - ECSとALBなどの細かい調整を行えた。ターゲットグループとか色々
+- 2021/07
+    - PHP/symphonyのAPIを作成できるようになる
 
 ### 30 day challenge
 
